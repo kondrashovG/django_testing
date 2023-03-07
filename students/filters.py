@@ -10,6 +10,11 @@ class CourseFilter(filters.FilterSet):
         to_field_name="id",
         queryset=Course.objects.all(),
     )
+    # name = filters.ModelMultipleChoiceFilter(
+    #     field_name="name",
+    #     to_field_name="name",
+    #     queryset=Course.objects.all(),
+    # )
 
     class Meta:
         model = Course
