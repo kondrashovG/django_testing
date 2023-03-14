@@ -31,14 +31,15 @@ def test_get_cource(client, course_factory):
 
     # Arrange
     courses = course_factory()
+    print(courses.id, courses.name)
 
     # Act
-    response = client.get(f'/api/v1/courses/')
-
+    response = client.get(f'/api/v1/courses/{courses.id}/')
+    print(response)
     # Assert
     data = response.json()
     assert response.status_code == 200
-    assert courses.name == data[0]['name']
+    assert courses.name == data['name']
 
 
 @pytest.mark.django_db
@@ -61,22 +62,18 @@ def test_get_cources(client, course_factory):
 
 @pytest.mark.django_db
 def test_get_filter_cources(client, course_factory):
-    # проверка фильтрации списка курсов по id и name
-    # Arrange
-    quantity = 9
+    courses = course_factory(_quantity=9)
     i = 6
-    courses = course_factory(_quantity=quantity)
-    # Act
-    response_id = client.get(f'/api/v1/courses/{courses[i].id}/')
-    response_name = client.get(f'/api/v1/courses/?name={courses[i].name}')
-    # Assert
-    data_id = response_id.json()
-    data_name = response_name.json()
-    assert response_id.status_code == 200
-    assert response_name.status_code == 200
-    assert courses[i].name == data_id['name']
-    assert courses[i].name == data_name[0]['name']
 
+    # Act
+    response = client.get('/api/v1/courses/', {'id': courses[i].id, 'name': courses[i].name},)
+    print(response.json())
+    # Assert
+    # data = response.json()
+
+    assert response.status_code == 200
+    assert courses[i].id == response.json()[0]['id']
+    assert courses[i].name == response.json()[0]['name']
 
 @pytest.mark.django_db
 def test_create_course(client):
